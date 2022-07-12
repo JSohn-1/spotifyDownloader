@@ -5,7 +5,7 @@ from gooey import Gooey, GooeyParser
 import platform
 #Create gui
 
-@Gooey(program_name="Spotify downloader",requires_shell=False)
+@Gooey(program_name="Spotify downloader",requires_shell=True)
 def main():
     parser = GooeyParser(description="Spotify to subsonic downloader.")
     parser.add_argument("-legacy_login", "-l", help="Select if the server doesn't support authentication with a salt", action="store_true")
