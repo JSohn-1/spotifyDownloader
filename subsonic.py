@@ -40,12 +40,21 @@ class subsonic:
         n = name
         for type in result.findall("searchResult2/song"):
             if type.get("title") == n:
+                #print(type.get("title"))
                 return(type.get("id"))
 
         for type in result.findall("searchResult2/album"):
             if type.get("title") == n:
-                return(type.get("id"))
-        
+                result = requests.get(self.request("getAlbum", [{"head": "id", "content": [type.get("id")]}])).text
+                result = result.replace("â", "’")
+                result = result.replace("Ã«", "ë")
+
+                result = ET.fromstring(result)
+
+                for type in result.findall("album/song"):
+                    if type.get("title") == n:
+                        return(type.get("id"))
+
         n = html.escape(n)
 
         for type in result.findall("searchResult2/song"):
@@ -87,6 +96,8 @@ class subsonic:
 
 
     def addToPlaylist(self, id, sid):
+        if id == "al-113":
+            print("E")
         return requests.post(self.request("updatePlaylist", [{"head": "playlistId", "content": [id]}, {"head": "songIdToAdd", "content": sid}]))
 
     def scan(self):

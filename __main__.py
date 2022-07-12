@@ -5,7 +5,7 @@ from gooey import Gooey, GooeyParser
 import platform
 #Create gui
 
-@Gooey(program_name="Spotify downloader")
+@Gooey(program_name="Spotify downloader",requires_shell=False)
 def main():
     parser = GooeyParser(description="Spotify to subsonic downloader.")
     parser.add_argument("-legacy_login", "-l", help="Select if the server doesn't support authentication with a salt", action="store_true")
@@ -43,7 +43,8 @@ def main():
         else:
             raise Exception(response[1])
         
-    print(files.downloadPlaylist(args.Playlist_link, ss, args.Threads, args.Location))
+    files.downloadPlaylist(args.Playlist_link, ss, args.Threads, args.Location, "flac")
+
 
 if __name__ == '__main__':
     main()
