@@ -21,7 +21,7 @@ class files:
             client_secret="212476d9b0f3472eaa762d90b19b0ba8",
             user_auth=False
         )
-        arguments = {
+        spotdl_opts = {
             "query": [url],
             "output_format": format,
             "download_threads": int(threads),
@@ -33,7 +33,7 @@ class files:
             "threads": int(threads)
 
         }
-        spotdl_opts = vars(arguments)
+        
         os.chdir(directory)
         
         with DownloadManager(spotdl_opts) as downloader:

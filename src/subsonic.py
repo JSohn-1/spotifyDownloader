@@ -3,6 +3,7 @@ import html
 import xml.etree.ElementTree as ET
 import hashlib
 import secrets
+from bs4 import BeautifulSoup
 
 class subsonic:
     def __init__(self, username, password, url, salt=False):
@@ -32,10 +33,14 @@ class subsonic:
     def getId(self, name):
         #name = name.replace("’", "\'")
         nme = name
-        result = requests.get(self.request("search2", [{"head": "query", "content": [name]}])).text
+        result = requests.get(self.request("search2", [{"head": "query", "content": [name]}]))
+        result.encoding = 'utf-8'
+        result = result.text
+        """
         result = result.replace("â", "’")
         result = result.replace("Ã«", "ë")
-
+        """
+        #result = BeautifulSoup(result.decode('utf-8'), "html.parser")
         result = ET.fromstring(result)
         n = name
         for type in result.findall("searchResult2/song"):
@@ -45,10 +50,9 @@ class subsonic:
 
         for type in result.findall("searchResult2/album"):
             if type.get("title") == n:
-                result = requests.get(self.request("getAlbum", [{"head": "id", "content": [type.get("id")]}])).text
-                result = result.replace("â", "’")
-                result = result.replace("Ã«", "ë")
-
+                result = requests.get(self.request("getAlbum", [{"head": "id", "content": [type.get("id")]}]))
+                result.encoding = 'utf-8'
+                result = result.text
                 result = ET.fromstring(result)
 
                 for type in result.findall("album/song"):
