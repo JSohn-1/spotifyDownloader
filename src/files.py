@@ -157,25 +157,7 @@ class files:
 
         
         return Path(name).stem
-    """
-    @staticmethod
-    def getTitle(file):
-        return files.getFileProperties(file)["Title"]
 
-    @staticmethod
-    def getFileProperties(fname):
-        shell = Dispatch("Shell.Application")
-        _dict = {}
-        # enter directory where your file is located
-        ns = shell.NameSpace(os. getcwd())
-        for i in ns.Items():
-            # Check here with the specific filename
-            if str(i) == fname:
-                for j in range(0,49):
-                    _dict[ns.GetDetailsOf(j,j)] = ns.GetDetailsOf(i,j)
-
-        return(_dict)
-    """
     @staticmethod
     def getTitle(file):
         return taglib.File(file).tags["TITLE"][0]

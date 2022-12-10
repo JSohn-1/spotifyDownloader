@@ -38,8 +38,6 @@ def main():
     parser.add_argument("Location", help="Where spotdl will download the music to.", widget="DirChooser")
     
     args = parser.parse_args()
-    for i in range(50):
-        print(i)
 
     ss = subsonic(args.Username, args.Password, args.URL, not args.legacy_login)
     s = ss.ping()
@@ -61,7 +59,7 @@ def main():
         else:
             raise Exception(response[1])
         
-    print(files.downloadPlaylist(args.Playlist_link, ss, args.Threads, args.Location, "flac"))
+    print(files.downloadPlaylist(args.Playlist_link, ss, args.Threads, args.Location, "mp3"))
 
 
 if __name__ == '__main__':

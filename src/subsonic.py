@@ -3,7 +3,6 @@ import html
 import xml.etree.ElementTree as ET
 import hashlib
 import secrets
-from bs4 import BeautifulSoup
 
 class subsonic:
     def __init__(self, username, password, url, salt=False):
@@ -15,10 +14,10 @@ class subsonic:
     def request(self, req, params=[]):
         if self.salt:
             salt = secrets.token_hex(8)
-            req = "http://" + self.url + "/rest/" + req + ".view?u=" + self.username + "&t=" + hashlib.md5((self.password + salt).encode('utf-8')).hexdigest() + "&s=" + salt + "&v=1.12.0&c=myapp"
+            req = "http://" + self.url + "/rest/" + req + ".view?u=" + self.username + "&t=" + hashlib.md5((self.password + salt).encode('utf-8')).hexdigest() + "&s=" + salt + "&v=1.12.0&c=playlist"
             
         else:
-            req = "http://" + self.url + "/rest/" + req + ".view?u=" + self.username + "&p=" + self.password + "&v=1.12.0&c=myapp"
+            req = "http://" + self.url + "/rest/" + req + ".view?u=" + self.username + "&p=" + self.password + "&v=1.12.0&c=playlist"
 
         for p in params:
             for n in p["content"]:
@@ -32,60 +31,48 @@ class subsonic:
 
     def getId(self, name):
         #name = name.replace("’", "\'")
-        nme = name
-        result = requests.get(self.request("search2", [{"head": "query", "content": [name]}]))
-        result.encoding = 'utf-8'
-        result = result.text
+        prev = ""
+        count = 20
+        while True:
+            nme = name
+            result = requests.get(self.request("search2", [{"head": "query", "content": [name]}, {"head": "albumCount", "content": [str(count)]}]))
+            result.encoding = 'utf-8'
+            result = result.text
+            if result == prev:
+                break
+            """
+            result = result.replace("â", "’")
+            result = result.replace("Ã«", "ë")
+            """
+
+            result = ET.fromstring(result)
+            n = name
+            for type in result.findall("searchResult2/song"):
+                if type.get("title") == n:
+                    #print(type.get("title"))
+                    return(type.get("id"))
+
+            for type in result.findall("searchResult2/album"):
+                if type.get("title") == n:
+                    result = requests.get(self.request("getAlbum", [{"head": "id", "content": [type.get("id")]}]))
+                    result.encoding = 'utf-8'
+                    result = result.text
+                    result = ET.fromstring(result)
+
+                    for type in result.findall("album/song"):
+                        if type.get("title") == n:
+                            return(type.get("id"))
+
+            count = count + 10
+            prev = result
+
+
         """
-        result = result.replace("â", "’")
-        result = result.replace("Ã«", "ë")
-        """
-        #result = BeautifulSoup(result.decode('utf-8'), "html.parser")
-        result = ET.fromstring(result)
-        n = name
-        for type in result.findall("searchResult2/song"):
-            if type.get("title") == n:
-                #print(type.get("title"))
-                return(type.get("id"))
-
-        for type in result.findall("searchResult2/album"):
-            if type.get("title") == n:
-                result = requests.get(self.request("getAlbum", [{"head": "id", "content": [type.get("id")]}]))
-                result.encoding = 'utf-8'
-                result = result.text
-                result = ET.fromstring(result)
-
-                for type in result.findall("album/song"):
-                    if type.get("title") == n:
-                        return(type.get("id"))
-
-        n = html.escape(n)
-
-        for type in result.findall("searchResult2/song"):
-            if type.get("title") == n:
-                return(type.get("id"))
-
-        for type in result.findall("searchResult2/album"):
-            if type.get("title") == n:
-                return(type.get("id"))
-
-        n = n.replace("\'", "&quot;")
-
-        for type in result.findall("searchResult2/song"):
-            if type.get("title") == n:
-                return(type.get("id"))
-
-        for type in result.findall("searchResult2/album"):
-            if type.get("title") == n:
-                return(type.get("id"))
-
-        name = name.replace("\'", "\"")
-            
         print(nme)
         print(n)
         print(name)
         print("------")
-
+        """
 
     def createPlaylist(self, name):
         return requests.post(self.request("createPlaylist", [{"head": "name", "content": [name]}]))
