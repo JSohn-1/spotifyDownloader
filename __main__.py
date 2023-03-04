@@ -190,7 +190,7 @@ def download_all_playlists(path_to_configs: str, check=False):
     #print(playlists)
 
 def main():
-    config_location = ".\\config\\"
+    config_location = "./config"
     # Check if the config directory exists and has at least one config file and if not create config directory and raise error
     if not os.path.exists(config_location):
         os.mkdir(config_location) 
