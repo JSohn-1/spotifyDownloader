@@ -7,7 +7,6 @@ client_id, client_secret = "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472e
 client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-
 # Get the name of a spotify playlist from a url using spotipy
 @staticmethod
 def playlistName(url):
@@ -29,3 +28,7 @@ def playlistContents(url):
         title = track['track']['name']
         playlist_contents.append(f"{artists} - {title}")
     return playlist_contents
+
+@staticmethod
+def getId(url):
+    return re.search(r"playlist/(\w+)", url).group(1)

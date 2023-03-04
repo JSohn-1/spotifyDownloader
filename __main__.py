@@ -114,11 +114,10 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
     for playlist in config.playlists:
         if playlist in cache:
             # Check if the playlist has changed
-            playlist = sp.playlist()
-            playlist_name = playlist['name']
-            playlist_tracks = playlist['tracks']['items']
-            playlist_tracks = [track['track']['name'] for track in playlist_tracks]
-            if playlist_tracks == cache[playlist]:
+            playlist_id = getId(config.playlists[playlist]['url'])
+            playlist_tracks = playlistContents(config.playlists[playlist]['url'])
+
+            if playlist_tracks == cache[playlist_id]:
                 print(f"Playlist {playlist_name} has not changed, skipping...")
                 continue
             else:
@@ -128,6 +127,13 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
                 # Update the cache
                 cache[playlist] = playlist_tracks
                 continue
+        else:
+            # Download the playlist
+            download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
+            # Update the cache
+            cache[playlist] = playlistContents(config.playlists[playlist]['url'])
+            continue
+
 
 
                 
