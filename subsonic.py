@@ -1,3 +1,5 @@
+# As of now not used, kept for reference
+
 import hashlib
 import random
 import string
