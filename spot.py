@@ -11,23 +11,32 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 @staticmethod
 def playlistName(url):
     playlist_id = re.search(r"playlist/(\w+)", url).group(1)
-    return sp.playlist(playlist_id)
+    return sp.playlist(playlist_id)['name']
 
-# Get the contents of a spotify playlist from a url using spotipy in the same form as spotdl: artiists seperated by commas - song title
+# Get the contents of a spotify playlist from a url using spotipy in the same form as spotdl: artists seperated by commas - song title
 @staticmethod
 def playlistContents(url):
-    playlist_id = re.search(r"playlist/(\w+)", url).group(1)
-    playlist = sp.playlist(playlist_id)
-    playlist_tracks = playlist['tracks']['items']
-    playlist_contents = []
-    for track in playlist_tracks:
+    # Get all of the tracks of the playlist, accounting for the fact that the playlist may be split into multiple pages
+    playlist_id = getId(url)
+    tracks = []
+    results = sp.playlist_tracks(playlist_id)
+    tracks.extend(results['items'])
+    while results['next']:
+        results = sp.next(results)
+        tracks.extend(results['items'])
+
+    # Get the artist and song name for each track
+    contents = []
+    for track in tracks:
         artists = []
         for artist in track['track']['artists']:
             artists.append(artist['name'])
-        artists = ", ".join(artists)
-        title = track['track']['name']
-        playlist_contents.append(f"{artists} - {title}")
-    return playlist_contents
+        contents.append(f"{' & '.join(artists)} - {track['track']['name']}")
+
+    return contents
+
+
+
 
 @staticmethod
 def getId(url):

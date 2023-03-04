@@ -37,11 +37,8 @@ class Configuration:
     return self.config['playlists']
 
 def download_playlist(server, url, threads, dir=None, format="mp3", lyrics="genius", bitrate=320, explicit=False, update=True, admin=None):
-    # Extract playlist ID from playlist URL
-    playlist_id = re.search(r"playlist/(\w+)", url).group(1)
-    # Get playlist name
-    playlist = sp.playlist(playlist_id)
-    playlist_name = playlist['name']
+    # Get the name of the playlist from the url
+    playlist_name = playlistName(url)
 
     print(f"----------------------------------------- Playlist {playlist_name} starting -----------------------------------------")
 
@@ -106,39 +103,42 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
     # Get the playlist from the subsonic server, and if they completly match, then skip the playlist
     # If they don't match, then download the playlist and update the .cache file
 
-    cache = Configuration(os.path.join(config_location, ".cache"))
-    cache = cache.config["cache"]
-    
-
+    #Dont use the Configuration class because it doesn't work with the .cache file
+    with open(os.path.join(config_location, ".cache"), 'r') as f:
+        cache = json.load(f)
 
     for playlist in config.playlists:
-        if playlist in cache:
-            # Check if the playlist has changed
-            playlist_id = getId(config.playlists[playlist]['url'])
-            playlist_tracks = playlistContents(config.playlists[playlist]['url'])
+        playlist_id = getId(playlist['url'])
 
+        if playlist_id in cache:
+            # Check if the playlist has changed
+            playlist_tracks = playlistContents(playlist['url'])
+            playlist_name = playlistName(playlist["url"])
             if playlist_tracks == cache[playlist_id]:
                 print(f"Playlist {playlist_name} has not changed, skipping...")
-                continue
+                
             else:
                 print(f"Playlist {playlist_name} has changed, downloading...")
                 # Download the playlist
                 download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
                 # Update the cache
-                cache[playlist] = playlist_tracks
-                continue
+                cache[playlist_id] = playlist_tracks
+                
         else:
+            playlist_name = playlistName(playlist["url"])
+            print(f"Playlist {playlist_name} has not been downloaded before, downloading...")
             # Download the playlist
             download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
             # Update the cache
-            cache[playlist] = playlistContents(config.playlists[playlist]['url'])
-            continue
+            cache[playlist_id] = playlistContents(playlist['url'])
+            
 
 
+    # Save the cache
+    with open(os.path.join(config_location, ".cache"), 'w') as f:
+        json.dump(cache, f, indent=2)
 
-                
-
-def download_all_playlists(path_to_configs: str, config_location, check=False):
+def download_all_playlists(path_to_configs: str, check=False):
     config_files = [f for f in os.listdir(path_to_configs) if f.endswith('.json')]
 
     # Find an admin account for each subsonic server
@@ -177,7 +177,7 @@ def download_all_playlists(path_to_configs: str, config_location, check=False):
         use_salt = not server_config["authenticate_with_hash_and_salt"]
         client = SubsonicClient(base_url, username, password, use_salt)
 
-        download_playlists(client, config, admin[base_url], config_location, check)
+        download_playlists(client, config, admin[base_url], path_to_configs, check)
 
 
     #print(temp)
