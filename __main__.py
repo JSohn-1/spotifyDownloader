@@ -103,10 +103,14 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
     # Get the playlist from the subsonic server, and if they completly match, then skip the playlist
     # If they don't match, then download the playlist and update the .cache file
 
-    #Dont use the Configuration class because it doesn't work with the .cache file
-    with open(os.path.join(config_location, ".cache"), 'r') as f:
-        cache = json.load(f)
-
+    #Check if the .cache file exists
+    if os.path.exists(os.path.join(config_location, ".cache")):
+        #Dont use the Configuration class because it doesn't work with the .cache file
+        with open(os.path.join(config_location, ".cache"), 'r') as f:
+            cache = json.load(f)
+    else:
+        cache = {}
+        
     for playlist in config.playlists:
         playlist_id = getId(playlist['url'])
 
