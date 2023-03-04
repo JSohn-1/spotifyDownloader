@@ -1,4 +1,0 @@
-Gooey==1.0.8.1
-pytaglib==1.5.0
-requests==2.27.1
-spotdl==3.9.6
