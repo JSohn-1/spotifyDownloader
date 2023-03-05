@@ -7,6 +7,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import subprocess
 from time import sleep
 from spot import *
+import sys
 
 # Client creds
 client_id, client_secret = "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
@@ -145,6 +146,19 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
 def download_all_playlists(path_to_configs: str, check=False):
     config_files = [f for f in os.listdir(path_to_configs) if f.endswith('.json')]
 
+    # Make sure that all links for the playlist directory is valid
+    for config_file in config_files:
+        config = Configuration(os.path.join(path_to_configs, config_file))
+        server_config = config.server
+        base_url = server_config['url']
+        username = server_config['user']
+        password = server_config['pass']
+        use_salt = not server_config["authenticate_with_hash_and_salt"]
+        client = SubsonicClient(base_url, username, password, use_salt)
+        for playlist in config.playlists:
+            if not isPlaylist(playlist['url']):
+                raise Exception(f"Invalid url: {playlist['url']}")
+
     # Find an admin account for each subsonic server
     admin = {}
 
@@ -190,10 +204,16 @@ def download_all_playlists(path_to_configs: str, check=False):
     #print(playlists)
 
 def main():
-    config_location = "./config"
+    # Get the config directory from a command line argument and if none is specficied use the default, which is './config' in the current directory
+    config_location = sys.argv[1] if len(sys.argv) > 1 else "./config"
+
     # Check if the config directory exists and has at least one config file and if not create config directory and raise error
     if not os.path.exists(config_location):
         os.mkdir(config_location) 
+        raise Exception("No config files found. Please create a config file in the config directory and try again.")
+
+    # Check to make sure there are files in the config directory
+    if not os.listdir(config_location):
         raise Exception("No config files found. Please create a config file in the config directory and try again.")
 
     # Check to make sure spotdl is installed

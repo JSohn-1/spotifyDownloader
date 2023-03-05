@@ -1,0 +1,25 @@
+{
+    "server": {
+        "user": "user2",
+        "pass": "password",
+        "url": "example.com/music_two",
+        "authenticate_with_hash_and_salt": false,
+        "threads": 16,
+        "bitrate": "320k",
+        "format": "mp3",
+        "lyrics": "genius",
+        "update": true,
+        "dir": "/media/music_two"
+    },
+    "playlists": [
+        {
+        "url": "https://open.spotify.com/playlist/playlist_5"
+        },
+        {
+        "url": "https://open.spotify.com/playlist/playlist_6"
+        },
+        {
+        "url": "https://open.spotify.com/playlist/playlist_7"
+        }
+    ]
+    }

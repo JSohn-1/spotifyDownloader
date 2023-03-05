@@ -34,9 +34,11 @@ def playlistContents(url):
 
     return contents
 
-
-
-
 @staticmethod
 def getId(url):
     return re.search(r"playlist/(\w+)", url).group(1)
+
+# Check if a link is from a spotify playlist
+@staticmethod
+def isPlaylist(url):
+    return re.search(r"spotify.com/playlist/(\w+)", url):
