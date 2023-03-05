@@ -7,7 +7,7 @@ class subsonic(libsonic.Connection):
     def __init__(self, url, username, password, legacy=False):
 
         if "http" not in url:
-            raise Exception("Invalid URL")
+            raise Exception("Invalid URL; must start with http or https")
         port = None
         # If the url has https in it then make the port 443
         if "https" in url:
