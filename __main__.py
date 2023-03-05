@@ -196,6 +196,12 @@ def main():
         os.mkdir(config_location) 
         raise Exception("No config files found. Please create a config file in the config directory and try again.")
 
+    # Check to make sure spotdl is installed
+    try:
+        import spotdl
+    except ImportError:
+        raise Exception("Spotdl is not installed. Please install spotdl and try again.")
+
     download_all_playlists(config_location)
     print("done")
 

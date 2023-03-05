@@ -10,8 +10,7 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 # Get the name of a spotify playlist from a url using spotipy
 @staticmethod
 def playlistName(url):
-    playlist_id = re.search(r"playlist/(\w+)", url).group(1)
-    return sp.playlist(playlist_id)['name']
+    return sp.playlist(getId(url))['name']
 
 # Get the contents of a spotify playlist from a url using spotipy in the same form as spotdl: artists seperated by commas - song title
 @staticmethod
