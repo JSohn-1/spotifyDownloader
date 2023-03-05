@@ -2,7 +2,7 @@
     "server": {
         "user": "user",
         "pass": "password",
-        "url": "example.com/music_one",
+        "url": "https://example.com/music_one",
         "authenticate_with_hash_and_salt": false,
         "threads": 16,
         "bitrate": "320k",
