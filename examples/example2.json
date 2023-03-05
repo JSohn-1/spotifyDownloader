@@ -3,7 +3,7 @@
         "user": "user2",
         "pass": "password",
         "url": "example.com/music_two",
-        "authenticate_with_hash_and_salt": false,
+        "authenticate_with_hash_and_salt": true,
         "threads": 16,
         "bitrate": "320k",
         "format": "mp3",

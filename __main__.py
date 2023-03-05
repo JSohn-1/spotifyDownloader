@@ -197,11 +197,8 @@ def download_all_playlists(path_to_configs: str, check=False):
 
         download_playlists(client, config, admin[base_url], path_to_configs, check)
 
-
-    #print(temp)
     print("----------------------------------------- Files Downloaded -----------------------------------------")
     print("Saving playlists...")
-    #print(playlists)
 
 def main():
     # Get the config directory from a command line argument and if none is specficied use the default, which is './config' in the current directory

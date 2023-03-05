@@ -19,7 +19,6 @@ class subsonic(libsonic.Connection):
             url = url.split("://")[0] + "://" + url.split("://")[1].split("/")[0].split(":")[0] + "/" + "/".join(url.split("://")[1].split("/")[1:])
 
         # If the port is still None then make the port 80
-
         if port is None:
             port = 80
 
