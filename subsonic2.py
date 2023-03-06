@@ -188,11 +188,7 @@ class subsonic(libsonic.Connection):
 
         # Add the songs to the playlist 100 at a time
         for i in range(0, len(songs), increment):
-            # Print the song list to be added
             self.updatePlaylist(playlist_id, songIdsToAdd=songs[i:i+increment])
-            # Print the url request this would generate
-
-
         
         print(f"Total songs in file: {totalInFile}")
         print(f"Total songs: {totalSongs}")

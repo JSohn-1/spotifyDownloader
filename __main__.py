@@ -12,7 +12,7 @@ except ImportError as e:
     print(f"Error: {e}")
     print("Please install the required packages listed in requirements.txt using pip.")
     sys.exit()
-    
+
 # Client creds
 client_id, client_secret = "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
 
@@ -123,7 +123,7 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
             # Check if the playlist has changed
             playlist_tracks = playlistContents(playlist['url'])
             playlist_name = playlistName(playlist["url"])
-            if playlist_tracks == cache[playlist_id]:
+            if playlist_tracks == cache[playlist_id] and client.playlistExists(playlist_name):
                 print(f"Playlist {playlist_name} has not changed, skipping...")
                 
             else:
@@ -140,8 +140,6 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
             download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
             # Update the cache
             cache[playlist_id] = playlistContents(playlist['url'])
-            
-
 
     # Save the cache
     with open(os.path.join(config_location, ".cache"), 'w') as f:
