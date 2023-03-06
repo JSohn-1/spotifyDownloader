@@ -1,14 +1,18 @@
-import json
-import os
-from subsonic2 import subsonic as SubsonicClient
-import re
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import subprocess
-from time import sleep
-from spot import *
-import sys
-
+try:
+    import json
+    import os
+    from subsonic2 import subsonic as SubsonicClient
+    import spotipy
+    from spotipy.oauth2 import SpotifyClientCredentials
+    import subprocess
+    from time import sleep
+    from spot import *
+    import sys
+except ImportError as e:
+    print(f"Error: {e}")
+    print("Please install the required packages listed in requirements.txt using pip.")
+    sys.exit()
+    
 # Client creds
 client_id, client_secret = "5f573c9620494bae87890c0f08a60293", "212476d9b0f3472eaa762d90b19b0ba8"
 
