@@ -122,7 +122,7 @@ class subsonic(libsonic.Connection):
                 else:
                     return True
         return False
-    def createPlaylistFromM3U(self, m3u_file, replace=False, playlist_name=None, own=True, increment=100):
+    def createPlaylistFromM3U(self, m3u_file, replace=True, playlist_name=None, own=True, increment=100):
         """
         Reads a M3U file and creates a playlist on the server using the taglib
         package to find the title of the song files. If `playlist_name` is not
