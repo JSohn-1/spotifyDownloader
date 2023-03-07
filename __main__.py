@@ -41,6 +41,8 @@ class Configuration:
   def playlists(self):
     return self.config['playlists']
 
+downloading_playlists = []
+
 def download_playlist(server, url, threads, dir=None, format="mp3", lyrics="genius", bitrate=320, explicit=False, update=True, admin=None):
     # Get the name of the playlist from the url
     playlist_name = playlistName(url)
@@ -123,7 +125,7 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
             # Check if the playlist has changed
             playlist_tracks = playlistContents(playlist['url'])
             playlist_name = playlistName(playlist["url"])
-            if playlist_tracks == cache[playlist_id] and client.playlistExists(playlist_name):
+            if playlist_tracks == cache[playlist_id] and client.playlistExists(playlist_name) and (playlist_id not in downloading_playlists):
                 print(f"Playlist {playlist_name} has not changed, skipping...")
                 
             else:
@@ -132,6 +134,7 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
                 download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
                 # Update the cache
                 cache[playlist_id] = playlist_tracks
+                downloading_playlists.append(playlist_id)
                 
         else:
             playlist_name = playlistName(playlist["url"])
@@ -140,6 +143,8 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
             download_playlist(client, playlist["url"], config.server["threads"], dir=config.server["dir"], format=config.server["format"], lyrics=config.server["lyrics"], bitrate=config.server["bitrate"], update=config.server["update"], admin=admin)
             # Update the cache
             cache[playlist_id] = playlistContents(playlist['url'])
+            downloading_playlists.append(playlist_id)
+
 
     # Save the cache
     with open(os.path.join(config_location, ".cache"), 'w') as f:
