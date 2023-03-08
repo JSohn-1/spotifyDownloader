@@ -109,7 +109,7 @@ class subsonic(libsonic.Connection):
             playlists = [playlists]
 
         for playlist in playlists:
-            if playlist['name'] == playlist_name:
+            if playlist['name'] == playlist_name and playlist["owner"] == username:
                 return True
         return False
     
