@@ -1,7 +1,7 @@
 import libsonic
 import os
 import taglib
-
+from time import sleep
 class subsonic(libsonic.Connection):
     # Seperate the port from the url and pass it to the libsonic connection and if there is none then make the port 80 if http and 443 if https
     def __init__(self, url, username, password, legacy=False):
@@ -143,8 +143,11 @@ class subsonic(libsonic.Connection):
             username = None
 
         if replace and self.playlistExists(playlist_name, username):
-            self.deletePlaylist(self.findPlaylistId(playlist_name))
-        elif not replace and self.playlist_exists(playlist_name, username):
+            # Fixed bug where the playlist wouldn't be deleted fast enough
+            self.deletePlaylist(self.findPlaylistId(playlist_name, username))
+            while self.playlistExists(playlist_name, username):
+                time.sleep(0.1)
+        elif not replace and self.playlistExists(playlist_name, username):
             playlist_names = self.getPlaylists(username)
             i = 1
             while True:
