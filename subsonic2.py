@@ -189,7 +189,7 @@ class subsonic(libsonic.Connection):
                 songs.append(id)
                 totalSongs += 1
 
-        # Add the songs to the playlist 100 at a time
+        # Add the songs to the playlist at a certain amount at a time as defined by the increment variable
         for i in range(0, len(songs), increment):
             self.updatePlaylist(playlist_id, songIdsToAdd=songs[i:i+increment])
         
