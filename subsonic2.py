@@ -145,9 +145,8 @@ class subsonic(libsonic.Connection):
 
         if replace and self.playlistExists(playlist_name, username):
             # Fixed bug where the playlist wouldn't be deleted fast enough
-            self.deletePlaylist(self.findPlaylistId(playlist_name, username))
             while self.playlistExists(playlist_name, username):
-                time.sleep(0.1)
+                self.deletePlaylist(self.findPlaylistId(playlist_name, username))
         elif not replace and self.playlistExists(playlist_name, username):
             playlist_names = self.getPlaylists(username)
             i = 1

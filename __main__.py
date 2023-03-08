@@ -125,7 +125,7 @@ def download_playlists(client: SubsonicClient, config: Configuration, admin: Sub
             # Check if the playlist has changed
             playlist_tracks = playlistContents(playlist['url'])
             playlist_name = playlistName(playlist["url"])
-            if playlist_tracks == cache[playlist_id] and client.playlistExists(playlist_name) and (playlist_id not in downloading_playlists):
+            if playlist_tracks == cache[playlist_id] and client.playlistExists(playlist_name, client.username) and (playlist_id not in downloading_playlists):
                 print(f"Playlist {playlist_name} has not changed, skipping...")
                 
             else:
