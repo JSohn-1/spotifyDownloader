@@ -108,10 +108,16 @@ class subsonic(libsonic.Connection):
         if isinstance(playlists, dict):
             playlists = [playlists]
 
-        for playlist in playlists:
-            if playlist['name'] == playlist_name and playlist["owner"] == username:
-                return True
-        return False
+        if username is not None:
+            for playlist in playlists:
+                if playlist['name'] == playlist_name and playlist["owner"] == username:
+                    return True
+            return False
+        else:
+            for playlist in playlists:
+                if playlist['name'] == playlist_name:
+                    return True
+            return False
     
     def isSongInPlaylist(self, playlist_id, song_id, index=None):
         playlist = self.getPlaylist(playlist_id)
