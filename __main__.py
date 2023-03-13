@@ -166,6 +166,22 @@ def download_all_playlists(path_to_configs: str, check=False):
             if not isPlaylist(playlist['url']):
                 raise Exception(f"Invalid url: {playlist['url']}")
 
+    # Make sure all config files are valid and generate a list of those that are not, and then print them out
+    invalid_configs = []
+    for config_file in config_files:
+        config = Configuration(os.path.join(path_to_configs, config_file))
+        server_config = config.server
+        base_url = server_config['url']
+        username = server_config['user']
+        password = server_config['pass']
+        use_salt = not server_config["authenticate_with_hash_and_salt"]
+        client = SubsonicClient(base_url, username, password, use_salt)
+        if not client.ping():
+            invalid_configs.append(config_file)
+
+    if len(invalid_configs) > 0:
+        raise Exception(f"The following config files are invalid: {invalid_configs}")
+
     # Find an admin account for each subsonic server
     admin = {}
 
@@ -180,15 +196,19 @@ def download_all_playlists(path_to_configs: str, check=False):
 
         if client.isAdmin(client.username):
             admin[f'{client.baseUrl}:{client.port}'] = client
-    
     # Ensure there is an admin account for every subsonic server
     fail = []
     for config_file in config_files:
         config = Configuration(os.path.join(path_to_configs, config_file))
         server_config = config.server
-        
-        if server_config['url'] not in admin and server_config['url'] not in fail:
-            fail.append(server_config['url'])
+        base_url = server_config['url']
+        username = server_config['user']
+        password = server_config['pass']
+        use_salt = not server_config["authenticate_with_hash_and_salt"]
+        client = SubsonicClient(base_url, username, password, use_salt)
+
+        if f'{client.baseUrl}:{client.port}' not in admin:
+            fail.append(f'{client.baseUrl}:{client.port}')
 
     if fail:
         raise Exception(f'Admin not found for servers: {", ".join(fail)}')
@@ -202,7 +222,7 @@ def download_all_playlists(path_to_configs: str, check=False):
         use_salt = not server_config["authenticate_with_hash_and_salt"]
         client = SubsonicClient(base_url, username, password, use_salt)
 
-        download_playlists(client, config, admin[base_url], path_to_configs, check)
+        download_playlists(client, config, admin[f'{client.baseUrl}:{client.port}'], path_to_configs, check)
 
     print("----------------------------------------- Files Downloaded -----------------------------------------")
     print("Saving playlists...")
