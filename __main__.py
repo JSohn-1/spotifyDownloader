@@ -92,17 +92,17 @@ def download_playlist(server, url, threads, dir=None, format="mp3", lyrics="geni
             sleep(0.01)
 
     #Create Playlist
-    server.createPlaylistFromM3U(playlist_name + ".m3u", replace=update, playlist_name=playlist_name)
+    server.createPlaylistFromM3U(playlist_name + ".m3u8.m3u8", replace=update, playlist_name=playlist_name)
 
-    # Delete .m3u file if it exists
-    if os.path.exists(playlist_name + ".m3u"):
-        os.remove(playlist_name + ".m3u")
+    # Delete .m3u8 file if it exists
+    if os.path.exists(playlist_name + ".m3u8.m3u8"):
+        os.remove(playlist_name + ".m3u8.m3u8")
     else:
         raise Exception("eeeeeeeeeeeeeeee")
     
     os.chdir(curDir)
     print(f"----------------------------------------- Playlist {playlist_name} downloaded -----------------------------------------")
-    return([server, playlist_name + ".m3u"])
+    return([server, playlist_name + ".m3u8.m3u8"])
 
 def download_playlists(client: SubsonicClient, config: Configuration, admin: SubsonicClient, config_location, check):
     print(f"Downloading for user: " + client.username)
@@ -163,11 +163,12 @@ def download_all_playlists(path_to_configs: str, check=False):
         if not all(key in server_config for key in ("url", "user", "pass", "authenticate_with_hash_and_salt")):
             invalid_configs.append(config_file)
             continue
+        """
         # Same for playlists
         if not all(key in playlist for key in ("url", "name")):
             invalid_configs.append(config_file)
             continue
-
+        """
         base_url = server_config['url']
         username = server_config['user']
         password = server_config['pass']
