@@ -92,11 +92,11 @@ def download_playlist(server, url, threads, dir=None, format="mp3", lyrics="geni
             sleep(0.01)
 
     #Create Playlist
-    server.createPlaylistFromM3U(playlist_name + ".m3u", replace=update, playlist_name=playlist_name)
+    server.createPlaylistFromM3U(playlist_name + ".m3u8.m3u8", replace=update, playlist_name=playlist_name)
 
     # Delete .m3u file if it exists
-    if os.path.exists(playlist_name + ".m3u"):
-        os.remove(playlist_name + ".m3u")
+    if os.path.exists(playlist_name + ".m3u8.m3u8"):
+        os.remove(playlist_name + ".m3u8.m3u8")
     else:
         raise Exception("eeeeeeeeeeeeeeee")
     
